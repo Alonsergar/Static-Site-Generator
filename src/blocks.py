@@ -126,17 +126,3 @@ def markdown_to_html_node(markdown):
         html_nodes_blocks.append(node)
 
     return ParentNode(tag="div", children=html_nodes_blocks)
- #"<div><p>This is <b>bolded</b> paragraph text in a p tag here</p><p>This is another paragraph with <i>italic</i> text and <code>code</code> here</p></div>"
-md2="""
-
-
-```
-This is text that _should_ remain
-the **same** even with inline stuff
-```
-"""
-
-
-node = markdown_to_html_node(md2)
-html = node.to_html()
-print(html)
