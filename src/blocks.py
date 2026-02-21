@@ -1,7 +1,7 @@
 from enum import Enum
 from inline import text_to_textnodes
 from htmlnode import HTMLNode, ParentNode, LeafNode
-from textnode import text_node_to_html_node, TextNode, TextType
+from textnode import text_node_to_html_node
 
 
 class BlockType(Enum):
@@ -11,6 +11,16 @@ class BlockType(Enum):
     QUOTE = "quote"
     UNORDERED_LIST = "unordered_list"
     ORDERED_LIST = "ordered_list"
+
+
+def extract_title(markdown):
+    lineas=markdown.split("\n")
+    for linea in lineas:
+        if linea.startswith("#") and not linea.startswith("##"):
+            linea=linea.lstrip("#")
+            linea=linea.strip()
+            return linea
+    raise Exception("Título no encontrado")
 
 
 def markdown_to_blocks(markdown):

@@ -1,5 +1,5 @@
 import unittest
-from blocks import markdown_to_blocks,block_to_block_type,BlockType,markdown_to_html_node
+from blocks import markdown_to_blocks,block_to_block_type,BlockType,markdown_to_html_node,extract_title
 
 class TestBlockt(unittest.TestCase):
     def test_markdown_to_blocks(self):
@@ -198,5 +198,28 @@ A paragraph with _italic_.
             html,
             "<div><h1>Title</h1><p>A paragraph with <i>italic</i>.</p><ul><li>one</li><li>two</li></ul></div>",
         )
+class TestExtractTitle(unittest.TestCase):
+
+    def test_titulo_simple(self):
+        md = "# Mi título\nContenido"
+        self.assertEqual(extract_title(md), "Mi título")
+
+    def test_titulo_con_espacios(self):
+        md = "#    Título con espacios   \nTexto"
+        self.assertEqual(extract_title(md), "Título con espacios")
+
+    def test_ignora_subtitulos(self):
+        md = "## Subtitulo\n# Titulo real"
+        self.assertEqual(extract_title(md), "Titulo real")
+
+    def test_titulo_no_en_primera_linea(self):
+        md = "Texto inicial\n# Título"
+        self.assertEqual(extract_title(md), "Título")
+
+    def test_lanza_excepcion_si_no_hay_titulo(self):
+        md = "## Subtitulo\nTexto sin título"
+        with self.assertRaises(Exception):
+            extract_title(md)
+
 if __name__ == "__main__":
     unittest.main()
