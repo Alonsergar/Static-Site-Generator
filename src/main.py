@@ -3,6 +3,7 @@ from textnode import TextNode,TextType
 import os
 import shutil
 from blocks import markdown_to_html_node,extract_title
+import sys
 
 def recursive_copy(from_dir,to_dir):
     if not os.path.isdir(from_dir):
@@ -35,7 +36,7 @@ def copy_fromD1_toD2(fromDir,toDir):
 
 
 
-def generate_page(from_path,template_path,dest_path):
+def generate_page(from_path,template_path,dest_path,basepath):
    
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
    
@@ -52,31 +53,38 @@ def generate_page(from_path,template_path,dest_path):
 
     template = template.replace("{{ Title }}", title)
     template = template.replace("{{ Content }}", html)
-
+    template = template.replace('href="/', f'href="{basepath}')
+    template = template.replace('src="/', f'src="{basepath}')
     
     with open(dest_path,'w') as f:
         f.write(template)
 
 
-def generate_pages_recursive(dir_path_content,template_path,dest_dir_path):
+def generate_pages_recursive(dir_path_content,template_path,dest_dir_path,basepath):
     #llamada recursiva para pillar todos los content.md
     for element in os.listdir(dir_path_content):
         dest=os.path.join(dest_dir_path,element)
         path=os.path.join(dir_path_content,element)
         if os.path.isfile(path):
             dest= dest[:-2] + "html"
-            generate_page(path,template_path,dest)
+            generate_page(path,template_path,dest,basepath)
         else:
             
             os.mkdir(dest)
-            generate_pages_recursive(path,template_path,dest)
+            generate_pages_recursive(path,template_path,dest,basepath)
     
 
 
 
 
 def main():
-    copy_fromD1_toD2("/home/alonso/Escritorio/Boot.dev/Static-Site-Generator/static","/home/alonso/Escritorio/Boot.dev/Static-Site-Generator/public")
-    generate_pages_recursive("content/","template.html","public/")
+
+    basepath=sys.argv
+    if basepath==None:
+        basepath="/"
+
     
+    copy_fromD1_toD2("/home/alonso/Escritorio/Boot.dev/Static-Site-Generator/static","/home/alonso/Escritorio/Boot.dev/Static-Site-Generator/docs")
+    generate_pages_recursive("content/","template.html","docs/",basepath)
+
 main()
