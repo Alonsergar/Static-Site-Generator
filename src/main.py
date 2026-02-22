@@ -31,6 +31,10 @@ def copy_fromD1_toD2(fromDir,toDir):
     recursive_copy(fromDir,toDir)
     #Copy everything recursively
 
+
+
+
+
 def generate_page(from_path,template_path,dest_path):
    
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
@@ -49,18 +53,30 @@ def generate_page(from_path,template_path,dest_path):
     template = template.replace("{{ Title }}", title)
     template = template.replace("{{ Content }}", html)
 
-    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
-    file_towrite=open(dest_path,'w')
-    file_towrite.write(template)
-    file_towrite.close()
-            
-
-
-
     
+    with open(dest_path,'w') as f:
+        f.write(template)
+
+
+def generate_pages_recursive(dir_path_content,template_path,dest_dir_path):
+    #llamada recursiva para pillar todos los content.md
+    for element in os.listdir(dir_path_content):
+        dest=os.path.join(dest_dir_path,element)
+        path=os.path.join(dir_path_content,element)
+        if os.path.isfile(path):
+            dest= dest[:-2] + "html"
+            generate_page(path,template_path,dest)
+        else:
+            
+            os.mkdir(dest)
+            generate_pages_recursive(path,template_path,dest)
+    
+
+
+
 
 def main():
     copy_fromD1_toD2("/home/alonso/Escritorio/Boot.dev/Static-Site-Generator/static","/home/alonso/Escritorio/Boot.dev/Static-Site-Generator/public")
-    generate_page("content/index.md","template.html","public/index.html")
+    generate_pages_recursive("content/","template.html","public/")
     
 main()
