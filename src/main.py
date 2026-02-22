@@ -79,9 +79,10 @@ def generate_pages_recursive(dir_path_content,template_path,dest_dir_path,basepa
 
 def main():
 
-    basepath=sys.argv
-    if basepath==None:
-        basepath="/"
+    if len(sys.argv) > 1:
+        basepath = sys.argv[1]
+    else:
+        basepath = "/"
 
     
     copy_fromD1_toD2("/home/alonso/Escritorio/Boot.dev/Static-Site-Generator/static","/home/alonso/Escritorio/Boot.dev/Static-Site-Generator/docs")
